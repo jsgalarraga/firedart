@@ -91,7 +91,7 @@ class Firestore {
   /// changes to the server. If any of the data read has been modified outside
   /// of this [Transaction] since being read, then the transaction will be
   /// retried by executing the provided [TransactionHandler] again. If the transaction still
-  /// fails after 5 retries, then the transaction will fail.
+  /// fails after the specified [maxAttempts] retries, then the transaction will fail.
   ///
   /// The [TransactionHandler] may be executed multiple times, it should be able
   /// to handle multiple executions.
