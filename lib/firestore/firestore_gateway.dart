@@ -91,10 +91,18 @@ class FirestoreGateway {
     return Document(this, response);
   }
 
-  Future<Document> getDocument(path) async {
-    var rawDocument = await _client
-        .getDocument(GetDocumentRequest()..name = path)
-        .catchError(_handleError);
+  Future<Document> getDocument(
+    String path, {
+    List<int>? transaction,
+  }) async {
+    var getDocumentRequest = GetDocumentRequest()..name = path;
+
+    if (transaction != null) {
+      getDocumentRequest.transaction = transaction;
+    }
+
+    var rawDocument =
+        await _client.getDocument(getDocumentRequest).catchError(_handleError);
     return Document(this, rawDocument);
   }
 
