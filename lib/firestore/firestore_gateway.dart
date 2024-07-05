@@ -14,7 +14,9 @@ typedef RequestAuthenticator = Future<void>? Function(
 class FirestoreGateway {
   final RequestAuthenticator? _authenticator;
 
-  final String database;
+  late final String database;
+
+  late final String documentDatabase;
 
   final Map<String, _ListenStreamWrapper> _listenStreamCache;
 
@@ -28,9 +30,9 @@ class FirestoreGateway {
     RequestAuthenticator? authenticator,
     Emulator? emulator,
   })  : _authenticator = authenticator,
-        database =
-            'projects/$projectId/databases/${databaseId ?? '(default)'}/documents',
         _listenStreamCache = <String, _ListenStreamWrapper>{} {
+    database = 'projects/$projectId/databases/${databaseId ?? '(default)'}';
+    documentDatabase = '$database/documents';
     _setupClient(emulator: emulator);
   }
 
@@ -61,14 +63,14 @@ class FirestoreGateway {
       ..structuredQuery = query;
     final target = Target()..query = queryTarget;
     final request = ListenRequest()
-      ..database = database
+      ..database = documentDatabase
       ..addTarget = target;
 
     _listenStreamCache[path] = _ListenStreamWrapper.create(
         request,
         (requestStream) => _client.listen(requestStream,
             options: CallOptions(
-                metadata: {'google-cloud-resource-prefix': database})),
+                metadata: {'google-cloud-resource-prefix': documentDatabase})),
         onDone: () => _listenStreamCache.remove(path));
 
     return _mapCollectionStream(_listenStreamCache[path]!);
@@ -133,14 +135,14 @@ class FirestoreGateway {
     final documentsTarget = Target_DocumentsTarget()..documents.add(path);
     final target = Target()..documents = documentsTarget;
     final request = ListenRequest()
-      ..database = database
+      ..database = documentDatabase
       ..addTarget = target;
 
     _listenStreamCache[path] = _ListenStreamWrapper.create(
         request,
         (requestStream) => _client.listen(requestStream,
             options: CallOptions(
-                metadata: {'google-cloud-resource-prefix': database})),
+                metadata: {'google-cloud-resource-prefix': documentDatabase})),
         onDone: () => _listenStreamCache.remove(path));
 
     return _mapDocumentStream(_listenStreamCache[path]!.stream);
