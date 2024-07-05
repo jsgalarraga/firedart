@@ -99,7 +99,7 @@ class Firestore {
   /// Data accessed with the transaction will not reflect local changes that
   /// have not been committed. For this reason, it is required that all
   /// reads are performed before any writes. Transactions must be performed
-  /// while online. Otherwise, reads will fail, and the final commit will fail.
+  /// with an internet connection. Otherwise, reads will fail, and the final commit will fail.
   ///
   /// By default transactions will retry 5 times. You can change the number of attempts
   /// with [maxAttempts]. Attempts should be at least 1.
