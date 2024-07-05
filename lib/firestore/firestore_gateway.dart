@@ -160,6 +160,49 @@ class FirestoreGateway {
         .toList();
   }
 
+  Future<T> runTransaction<T>(
+    TransactionHandler<T> transactionHandler, {
+    int maxAttempts = 5,
+    int attempt = 1,
+  }) async {
+    try {
+      return await _runTransaction(transactionHandler);
+    } on GrpcError catch (e) {
+      if (e.code == StatusCode.aborted && attempt < maxAttempts) {
+        return await runTransaction(
+          transactionHandler,
+          attempt: attempt++,
+          maxAttempts: maxAttempts,
+        );
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  Future<T> _runTransaction<T>(
+    TransactionHandler<T> transactionHandler,
+  ) async {
+    final transactionRequest = BeginTransactionRequest(database: database);
+    var transactionResponse = await _client
+        .beginTransaction(transactionRequest)
+        .catchError(_handleError);
+
+    var transactionId = transactionResponse.transaction;
+    var transaction = Transaction(this, transactionId);
+
+    final result = await transactionHandler(transaction);
+
+    var commitRequest = CommitRequest(
+      database: database,
+      transaction: transactionId,
+      writes: transaction.writeMutations,
+    );
+    await _client.commit(commitRequest).catchError(_handleError);
+
+    return result;
+  }
+
   void close() {
     _listenStreamCache.forEach((_, stream) => stream.close());
     _listenStreamCache.clear();
