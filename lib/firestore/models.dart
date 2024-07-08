@@ -379,6 +379,7 @@ class QueryReference extends Reference {
 /// Signature of a transaction callback.
 typedef TransactionHandler<T> = Future<T> Function(Transaction transaction);
 
+/// Transaction class which is created from a call to [runTransaction()].
 class Transaction {
   final FirestoreGateway _gateway;
   final List<int> _transaction;
