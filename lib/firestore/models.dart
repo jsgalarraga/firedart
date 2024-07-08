@@ -385,8 +385,10 @@ class Transaction {
 
   Transaction(this._gateway, this._transaction);
 
-  // TODO(jsgalarraga): this shouldn't be public
-  final List<Write> writeMutations = <Write>[];
+  final List<Write> _mutations = <Write>[];
+
+  /// An immutable list of the [Write]s that have been added to this transaction.
+  UnmodifiableListView<Write> get mutations => UnmodifiableListView(_mutations);
 
   String _fullPath(String path) => '${_gateway.documentDatabase}/$path';
 
@@ -410,7 +412,7 @@ class Transaction {
   /// If the document does not exist, the operation does nothing and returns
   /// normally.
   Future<void> delete(String path) async {
-    writeMutations.add(
+    _mutations.add(
       Write(delete: _fullPath(path)),
     );
   }
@@ -422,7 +424,7 @@ class Transaction {
   ///
   /// If the document does not yet exist, it will be created.
   Future<void> update(String path, Map<String, dynamic> data) async {
-    writeMutations.add(
+    _mutations.add(
       Write(
         updateMask: DocumentMask(fieldPaths: data.keys),
         update: fs.Document(
@@ -440,7 +442,7 @@ class Transaction {
   ///
   /// If the document does not yet exist, it will be created.
   Future<void> set(String path, Map<String, dynamic> data) async {
-    writeMutations.add(
+    _mutations.add(
       Write(
         updateMask: null,
         update: fs.Document(

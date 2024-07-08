@@ -196,7 +196,7 @@ class FirestoreGateway {
     var commitRequest = CommitRequest(
       database: database,
       transaction: transactionId,
-      writes: transaction.writeMutations,
+      writes: transaction.mutations,
     );
     await _client.commit(commitRequest).catchError(_handleError);
 
