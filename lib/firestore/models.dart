@@ -411,7 +411,7 @@ class Transaction {
   ///
   /// If the document does not exist, the operation does nothing and returns
   /// normally.
-  Future<void> delete(String path) async {
+  void delete(String path) {
     _mutations.add(
       Write(delete: _fullPath(path)),
     );
@@ -423,7 +423,7 @@ class Transaction {
   /// are not specified in [data] will not be changed.
   ///
   /// If the document does not yet exist, it will be created.
-  Future<void> update(String path, Map<String, dynamic> data) async {
+  void update(String path, Map<String, dynamic> data) {
     _mutations.add(
       Write(
         updateMask: DocumentMask(fieldPaths: data.keys),
@@ -441,7 +441,7 @@ class Transaction {
   /// that all fields that are not specified in [data] will be deleted.
   ///
   /// If the document does not yet exist, it will be created.
-  Future<void> set(String path, Map<String, dynamic> data) async {
+  void set(String path, Map<String, dynamic> data) {
     _mutations.add(
       Write(
         updateMask: null,

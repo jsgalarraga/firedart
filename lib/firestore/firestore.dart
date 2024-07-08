@@ -110,7 +110,7 @@ class Firestore {
   ///     final doc = await transaction.get('myCollection/documentId');
   ///     final value = doc.map['key'];
   ///     final newValue = value + 1;
-  ///     await transaction.update('myCollection/documentId', {'key': newValue});
+  ///     transaction.update('myCollection/documentId', {'key': newValue});
   ///   },
   /// );
   /// ```
