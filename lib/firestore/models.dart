@@ -390,12 +390,6 @@ class Transaction {
   /// An immutable list of the [Write]s that have been added to this transaction.
   UnmodifiableListView<Write> get mutations => UnmodifiableListView(_mutations);
 
-  String _fullPath(String path) => '${_gateway.documentDatabase}/$path';
-
-  Map<String, fs.Value> _encodeMap(Map<String, dynamic> map) {
-    return map.map((key, value) => MapEntry(key, TypeUtil.encode(value)));
-  }
-
   /// Reads the document referenced by the provided [path].
   ///
   /// If the document does not exist, the operation throws a [GrpcError] with
@@ -451,5 +445,11 @@ class Transaction {
         ),
       ),
     );
+  }
+
+  String _fullPath(String path) => '${_gateway.documentDatabase}/$path';
+
+  Map<String, fs.Value> _encodeMap(Map<String, dynamic> map) {
+    return map.map((key, value) => MapEntry(key, TypeUtil.encode(value)));
   }
 }
