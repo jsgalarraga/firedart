@@ -103,6 +103,17 @@ class Firestore {
   ///
   /// By default transactions will retry 5 times. You can change the number of attempts
   /// with [maxAttempts]. Attempts should be at least 1.
+  ///
+  /// ```dart
+  /// await firestore.runTransaction(
+  ///   (transaction) async {
+  ///     final doc = await transaction.get('myCollection/documentId');
+  ///     final value = doc.map['key'];
+  ///     final newValue = value + 1;
+  ///     await transaction.update('myCollection/documentId', {'key': newValue});
+  ///   },
+  /// );
+  /// ```
   Future<T> runTransaction<T>(
     TransactionHandler<T> handler, {
     int maxAttempts = 5,
